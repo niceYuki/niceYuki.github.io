@@ -1,6 +1,6 @@
 # Мой сайт
 
-Простой статический сайт на HTML/CSS/JS, размещённый на GitHub Pages.
+Простой статический сайт на HTML/CSS/JS для **Noelle**, размещённый на GitHub Pages по адресу `https://Noelle.github.io`.
 
 ## Быстрый старт
 
