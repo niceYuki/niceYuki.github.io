@@ -55,12 +55,24 @@
       margin: 12px 0;
       cursor: pointer;
     }
+    /* Анимация подпрыгивания текста */
+    .bounce {
+      animation: bounceAnim 0.7s ease;
+    }
+    @keyframes bounceAnim {
+      0%   { transform: translateY(0); }
+      30%  { transform: translateY(-18px); }
+      55%  { transform: translateY(0); }
+      75%  { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
+  <audio id="yay-sound" src="yay.mp3" preload="auto"></audio>
   <main>
-    <h1>Noelle's webpage</h1>
+    <h1 id="title">Noelle's webpage</h1>
     <a class="rentry" href="#">my rentry</a>
     <p>lets chat!</p>
     <p>how are you feeling</p>
@@ -78,6 +90,24 @@
     }
     window.addEventListener('resize', resize);
     resize();
+
+    // === Подпрыгивание текста каждые 10 секунд со звуком ===
+    const title = document.getElementById('title');
+    const yaySound = document.getElementById('yay-sound');
+
+    function playYay() {
+      // Анимация подпрыгивания
+      title.classList.remove('bounce');
+      void title.offsetWidth; // перезапуск CSS-анимации
+      title.classList.add('bounce');
+      // Звук
+      try {
+        yaySound.currentTime = 0;
+        yaySound.play();
+      } catch (e) { /* звук не обязателен */ }
+    }
+
+    setInterval(playYay, 10000); // каждые 10 секунд
 
     // Параметры линии, исходящей из угла
     function drawCornerLine(cx, cy, dirX, dirY, time, color) {
