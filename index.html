@@ -101,11 +101,26 @@
       void title.offsetWidth; // перезапуск CSS-анимации
       title.classList.add('bounce');
       // Звук
-      try {
-        yaySound.currentTime = 0;
-        yaySound.play();
-      } catch (e) { /* звук не обязателен */ }
+      yaySound.currentTime = 0;
+      yaySound.play().catch(() => {}); // если заблокирован — молча пропускаем
     }
+
+    // === Разблокировка звука при первом взаимодействии пользователя ===
+    // Браузеры блокируют автозвук, пока пользователь не кликнет/не нажмёт клавишу.
+    // Размораживаем аудио при первом клике — после этого звук стабильно работает.
+    function unlockAudio() {
+      yaySound.volume = 1.0;
+      yaySound.play().then(() => {
+        yaySound.pause();
+        yaySound.currentTime = 0;
+      }).catch(() => {});
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('keydown', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    }
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('keydown', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
 
     setInterval(playYay, 10000); // каждые 10 секунд
 
