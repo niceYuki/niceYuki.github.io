@@ -9,15 +9,25 @@
       margin: 0;
       padding: 0;
       min-height: 100%;
-      background: #000000;
-      color: #0a3d0a;
+      background: #ffffff;      /* белый фон */
+      color: #0a3d0a;           /* тёмно-зелёный текст */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;     /* не мешает кликам */
+      z-index: -1;
     }
     main {
       max-width: 900px;
       margin: 0 auto;
       padding: 80px 20px;
       text-align: center;
+      position: relative;
     }
     h1 {
       color: #0a3d0a;
@@ -37,7 +47,7 @@
     }
     .rentry:hover {
       background: #0a3d0a;
-      color: #000;
+      color: #fff;
     }
     p {
       color: #0a3d0a;
@@ -48,11 +58,69 @@
   </style>
 </head>
 <body>
+  <canvas id="bg-canvas"></canvas>
   <main>
     <h1>Noelle's webpage</h1>
     <a class="rentry" href="#">my rentry</a>
     <p>lets chat!</p>
     <p>how are you feeling</p>
   </main>
+
+  <script>
+    // Зелёные виляющие линии в углах экрана
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Параметры линии, исходящей из угла
+    function drawCornerLine(cx, cy, dirX, dirY, time, color) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      const seg = 26;
+      const n = 34;
+      const amp = 22;           // амплитуда "виляния"
+      let x = cx, y = cy;
+      ctx.moveTo(x, y);
+      for (let i = 1; i <= n; i++) {
+        const t = i / n;
+        // основное направление
+        const px = cx + dirX * t * 360;
+        const py = cy + dirY * t * 360;
+        // перпендикулярные колебания (из стороны в сторону)
+        const wave = Math.sin(t * Math.PI * 3 + time + i) * amp * t;
+        x = px + (-dirY) * wave;
+        y = py + (dirX) * wave;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    let time = 0;
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      time += 0.04;
+      const dark = '#0a3d0a';
+      const med = '#1a6b2a';
+      const light = '#2e8b3a';
+      // Левая линия тянущаяся вниз сверху оправы
+      drawCornerLine(0, 0, 1, 0.35, time * 1.0, dark);      // сверху слева → вправо
+      drawCornerLine(0, h, 1, -0.35, time * 1.1, light);    // снизу слева → вправо
+      drawCornerLine(w, 0, -1, 0.35, time * 1.2 + 0.5, dark); // сверху справа → влево
+      drawCornerLine(w, h, -1, -0.35, time * 1.3, med);     // снизу справа → влево
+      // Дополнительно линии вертикально от углов к центру
+      drawCornerLine(0, 0, 0.35, 1, time * 0.9 + 0.8, med);     // сверху слева → вниз
+      drawCornerLine(w, 0, -0.35, 1, time * 0.9 + 1.2, light);  // сверху справа → вниз
+      requestAnimationFrame(frame);
+    }
+    frame();
+  </script>
 </body>
 </html>
