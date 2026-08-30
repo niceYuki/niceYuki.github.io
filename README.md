@@ -1,6 +1,6 @@
 # Мой сайт
 
-Простой обычный статический сайт на HTML/CSS/JS, размещённый на GitHub Pages по адресу `https://niceyuki.github.io`.
+Простой обычный статический сайт на HTML/CSS, размещённый на GitHub Pages по адресу `https://niceyuki.github.io`.
 
 ## Быстрый старт
 
@@ -22,4 +22,3 @@ python -m http.server 8000
 
 - `index.html` — разметка страницы
 - `style.css` — стили
-- `script.js` — скрипты
