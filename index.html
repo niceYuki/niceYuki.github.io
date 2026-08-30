@@ -3,29 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мой сайт</title>
+  <title>Моя веб-страница</title>
   <style>
-    /* Встроенные стили — побеждают любой кэшированный внешний CSS */
     html, body {
       margin: 0;
       padding: 0;
       min-height: 100%;
-      background: #000000;   /* чёрный фон */
-      color: #0a3d0a;        /* тёмно-зелёный текст */
+      background: #000000;
+      color: #0a3d0a;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 60px 20px;
+      padding: 80px 20px;
       text-align: center;
     }
-    h1 { color: #0a3d0a; font-size: 2.5rem; }
-    p  { color: #0a3d0a; font-size: 1.2rem; }
+    h1 {
+      color: #0a3d0a;
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .rentry {
+      display: inline-block;
+      color: #0a3d0a;
+      font-size: 1.4rem;
+      margin: 20px 0;
+      border-bottom: 2px solid #0a3d0a;
+      text-decoration: none;
+      padding-bottom: 2px;
+    }
+    .rentry:hover {
+      background: #0a3d0a;
+      color: #000;
+    }
+    p {
+      color: #0a3d0a;
+      font-size: 1.3rem;
+      margin: 12px 0;
+      cursor: pointer;
+    }
   </style>
-  <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#000000;color:#0a3d0a;">
-  <main></main>
+<body>
+  <main>
+    <h1>niceyuki's webpage</h1>
+    <a class="rentry" href="#">my rentry</a>
+    <p>lets chat!</p>
+    <p>how are you feeling</p>
+  </main>
 </body>
 </html>
