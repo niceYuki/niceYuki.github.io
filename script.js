@@ -1,47 +1,33 @@
-// === АДМИН-ПАНЕЛЬ ===
-// Код по умолчанию: 1234 (измени на свой)
-const ADMIN_CODE = '1234';
+// === АДМИН-ПАНЕЛЬ (по Konami коду) ===
+// Комбинация как в Yandere Simulator: ↑ ↑ ↓ ↓ ← → ← → B A
+const KONAMI = [
+  'ArrowUp', 'ArrowUp',
+  'ArrowDown', 'ArrowDown',
+  'ArrowLeft', 'ArrowRight',
+  'ArrowLeft', 'ArrowRight',
+  'b', 'a'
+];
 
-// Элементы
-const trigger = document.getElementById('trigger');   // скрытая точка (появляет поле кода)
-const codeBox = document.getElementById('code-box');
-const codeInput = document.getElementById('code-input');
-const codeError = document.getElementById('code-error');
-const adminBtn = document.getElementById('admin-btn');
+let keyIndex = 0;
+
+// Панель и кнопки
 const adminPanel = document.getElementById('admin-panel');
 
-// После верного ввода кода кнопка становится видимой
-let unlocked = false;
+// Отслеживаем нажатия клавиш
+document.addEventListener('keydown', (e) => {
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
 
-// Клик по скрытой точке — показываем поле ввода кода
-trigger.addEventListener('click', () => {
-  codeBox.style.display = 'block';
-  codeInput.focus();
-});
-
-// Проверка кода при нажатии Enter в поле
-function checkCode() {
-  if (codeInput.value.trim() === ADMIN_CODE) {
-    // Верный код → показываем кнопку админ-панели
-    unlocked = true;
-    adminBtn.style.display = 'inline-block';
-    codeError.style.display = 'none';
-    codeInput.value = '';
-    codeBox.style.display = 'none';
+  // Проверяем, совпадает ли текущая клавиша со следующей в комбинации
+  if (key === KONAMI[keyIndex]) {
+    keyIndex++;
+    // Комбинация полностью введена → открываем админ-панель
+    if (keyIndex === KONAMI.length) {
+      adminPanel.style.display = 'block';
+      keyIndex = 0; // сброс для повторного ввода
+    }
   } else {
-    // Неверный код → показываем ошибку, кнопка НЕ появляется
-    codeError.style.display = 'block';
+    keyIndex = (key === KONAMI[0]) ? 1 : 0;
   }
-}
-
-codeInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') checkCode();
-});
-
-// Кнопка открывает админ-панель
-adminBtn.addEventListener('click', () => {
-  adminPanel.style.display = 'block';
-  adminBtn.style.display = 'none';
 });
 
 // Действия в админ-панели
@@ -52,5 +38,4 @@ document.getElementById('admin-say-hi').addEventListener('click', () => {
 
 document.getElementById('admin-logout').addEventListener('click', () => {
   adminPanel.style.display = 'none';
-  unlocked = false;
 });
