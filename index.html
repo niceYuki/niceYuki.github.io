@@ -4,12 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Мой сайт</title>
+  <style>
+    /* Встроенные стили — побеждают любой кэшированный внешний CSS */
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #000000;   /* чёрный фон */
+      color: #0a3d0a;        /* тёмно-зелёный текст */
+    }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+    h1 { color: #0a3d0a; }
+    p  { color: #0a3d0a; }
+  </style>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <main class="container">
-    <h1>Привет</h1>
-    <p>Пока ничего нет.</p>
+<body style="background:#000000;color:#0a3d0a;">
+  <main>
+    <h1 style="color:#0a3d0a;">Привет</h1>
+    <p style="color:#0a3d0a;">Пока ничего нет.</p>
   </main>
 
   <script src="script.js"></script>
