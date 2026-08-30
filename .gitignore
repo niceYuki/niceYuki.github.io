@@ -1,0 +1,11 @@
+# Системные файлы ОС
+Thumbs.db
+Desktop.ini
+
+# Редакторы/IDE
+.vscode/
+.idea/
+*.swp
+
+# Локальные серверные файлы
+node_modules/
