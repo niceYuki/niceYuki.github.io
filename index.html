@@ -9,9 +9,10 @@
       margin: 0;
       padding: 0;
       min-height: 100%;
-      background: #ffffff;      /* белый фон */
-      color: #0a3d0a;           /* тёмно-зелёный текст */
+      background: #1a1f24;         /* тёмный грозовой фон */
+      color: #8fe08f;              /* светло-зелёный текст (виден на тёмном) */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
     }
     canvas {
       position: fixed;
@@ -19,7 +20,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;     /* не мешает кликам */
+      pointer-events: none;        /* не мешает кликам */
       z-index: -1;
     }
     main {
@@ -30,27 +31,28 @@
       position: relative;
     }
     h1 {
-      color: #0a3d0a;
+      color: #8fe08f;
       font-size: 3rem;
       margin-bottom: 10px;
       text-transform: uppercase;
       letter-spacing: 2px;
+      text-shadow: 0 0 12px rgba(143,224,143,.5);
     }
     .rentry {
       display: inline-block;
-      color: #0a3d0a;
+      color: #8fe08f;
       font-size: 1.4rem;
       margin: 20px 0;
-      border-bottom: 2px solid #0a3d0a;
+      border-bottom: 2px solid #8fe08f;
       text-decoration: none;
       padding-bottom: 2px;
     }
     .rentry:hover {
-      background: #0a3d0a;
-      color: #fff;
+      background: #8fe08f;
+      color: #1a1f24;
     }
     p {
-      color: #0a3d0a;
+      color: #8fe08f;
       font-size: 1.3rem;
       margin: 12px 0;
       cursor: pointer;
@@ -79,7 +81,7 @@
   </main>
 
   <script>
-    // Зелёные виляющие линии в углах экрана
+    // === Грозовые облака с молниями на весь экран ===
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let w, h;
@@ -87,9 +89,115 @@
     function resize() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
+      initClouds();
     }
+
+    // Облака
+    let clouds = [];
+    function initClouds() {
+      clouds = [];
+      const n = 7;
+      for (let i = 0; i < n; i++) {
+        clouds.push({
+          x: (i / n) * w + Math.random() * 60 - 30,
+          y: 30 + Math.random() * 140,
+          scale: 0.8 + Math.random() * 0.9,
+          speed: 0.15 + Math.random() * 0.3,
+          puffs: 5 + Math.floor(Math.random() * 4)
+        });
+      }
+    }
+
+    function drawCloud(c, time) {
+      ctx.save();
+      ctx.translate(c.x, c.y);
+      ctx.scale(c.scale, c.scale);
+      ctx.fillStyle = 'rgba(45,52,60,0.9)';
+      for (let i = 0; i < c.puffs; i++) {
+        const a = (i / c.puffs) * Math.PI * 2;
+        const px = Math.cos(a) * 70 * (0.8 + 0.2 * Math.sin(time + i));
+        const py = Math.sin(a) * 38 + Math.sin(time * 0.7 + i) * 6;
+        ctx.beginPath();
+        ctx.arc(px, py, 70 + 20 * Math.sin(time * 0.5 + i), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Вспышка молнии
+    let flash = 0;
+    let nextStrike = 2;
+    let bolts = [];
+
+    function makeBolt() {
+      const bx = Math.random() * w;
+      const by = 0;
+      const pts = [];
+      let x = bx, y = by;
+      let segs = 6 + Math.floor(Math.random() * 5);
+      for (let s = 0; s < segs; s++) {
+        pts.push({ x, y });
+        x += (Math.random() - 0.5) * 60;
+        y += 40 + Math.random() * 50;
+      }
+      pts.push({ x, y });
+      bolts.push({ pts, life: 0.35, max: 0.35 });
+      flash = Math.min(flash + 0.6, 0.7);
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      // небо
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#2b3440');
+      grad.addColorStop(0.5, '#202631');
+      grad.addColorStop(1, '#1a1f24');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // облака дрейфуют вправо
+      for (const c of clouds) {
+        c.x += c.speed;
+        if (c.x > w + 160) c.x = -160;
+        drawCloud(c, performance.now() / 1000);
+      }
+
+      // тайм молний
+      nextStrike -= 0.016;
+      if (nextStrike <= 0) {
+        makeBolt();
+        nextStrike = 1.5 + Math.random() * 4;
+      }
+
+      // рисуем молнии
+      bolts.forEach(b => {
+        b.life -= 0.016;
+        ctx.strokeStyle = 'rgba(230,240,255,' + (b.life / b.max) + ')';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(b.pts[0].x, b.pts[0].y);
+        for (let i = 1; i < b.pts.length; i++) {
+          const t = Math.sin(i * 12 + performance.now() / 40) * 6;
+          ctx.lineTo(b.pts[i].x + t, b.pts[i].y);
+        }
+        ctx.stroke();
+      });
+      bolts = bolts.filter(b => b.life > 0);
+
+      // вспышка, затухающая
+      if (flash > 0) {
+        ctx.fillStyle = 'rgba(255,255,255,' + flash * 0.25 + ')';
+        ctx.fillRect(0, 0, w, h);
+        flash *= 0.92;
+        if (flash < 0.01) flash = 0;
+      }
+
+      requestAnimationFrame(frame);
+    }
+
     window.addEventListener('resize', resize);
     resize();
+    frame();
 
     // === Подпрыгивание текста каждые 10 секунд со звуком ===
     const title = document.getElementById('title');
@@ -123,49 +231,6 @@
     document.addEventListener('touchstart', unlockAudio);
 
     setInterval(playYay, 10000); // каждые 10 секунд
-
-    // Параметры линии, исходящей из угла
-    function drawCornerLine(cx, cy, dirX, dirY, time, color) {
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2.2;
-      ctx.beginPath();
-      const seg = 26;
-      const n = 34;
-      const amp = 22;           // амплитуда "виляния"
-      let x = cx, y = cy;
-      ctx.moveTo(x, y);
-      for (let i = 1; i <= n; i++) {
-        const t = i / n;
-        // основное направление
-        const px = cx + dirX * t * 360;
-        const py = cy + dirY * t * 360;
-        // перпендикулярные колебания (из стороны в сторону)
-        const wave = Math.sin(t * Math.PI * 3 + time + i) * amp * t;
-        x = px + (-dirY) * wave;
-        y = py + (dirX) * wave;
-        ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
-
-    let time = 0;
-    function frame() {
-      ctx.clearRect(0, 0, w, h);
-      time += 0.04;
-      const dark = '#0a3d0a';
-      const med = '#1a6b2a';
-      const light = '#2e8b3a';
-      // Левая линия тянущаяся вниз сверху оправы
-      drawCornerLine(0, 0, 1, 0.35, time * 1.0, dark);      // сверху слева → вправо
-      drawCornerLine(0, h, 1, -0.35, time * 1.1, light);    // снизу слева → вправо
-      drawCornerLine(w, 0, -1, 0.35, time * 1.2 + 0.5, dark); // сверху справа → влево
-      drawCornerLine(w, h, -1, -0.35, time * 1.3, med);     // снизу справа → влево
-      // Дополнительно линии вертикально от углов к центру
-      drawCornerLine(0, 0, 0.35, 1, time * 0.9 + 0.8, med);     // сверху слева → вниз
-      drawCornerLine(w, 0, -0.35, 1, time * 0.9 + 1.2, light);  // сверху справа → вниз
-      requestAnimationFrame(frame);
-    }
-    frame();
   </script>
 </body>
 </html>
