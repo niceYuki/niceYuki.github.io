@@ -68,6 +68,188 @@
       75%  { transform: translateY(-8px); }
       100% { transform: translateY(0); }
     }
+
+    /* === Роблокс-персонаж справа снизу === */
+    #buddy {
+      position: fixed;
+      right: 28px;
+      bottom: 20px;
+      z-index: 20;
+      width: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+    #speech-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 4px;
+      animation: bob 1.6s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(40, 200, 60, 0.7));
+    }
+    #speech-btn:hover { transform: scale(1.08); }
+    #speech-btn svg { display: block; width: 52px; height: 62px; }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .buddy-body {
+      width: 110px;
+      height: 150px;
+      position: relative;
+    }
+    .buddy-head {
+      width: 48px;
+      height: 48px;
+      background: #e8b48a;
+      border-radius: 10px;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.12);
+    }
+    .buddy-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      pointer-events: none;
+    }
+    .buddy-eyes {
+      display: flex;
+      gap: 10px;
+    }
+    .buddy-eye {
+      width: 7px;
+      height: 10px;
+      background: #222;
+      border-radius: 50%;
+    }
+    .buddy-smile {
+      width: 18px;
+      height: 9px;
+      border-bottom: 3px solid #222;
+      border-radius: 0 0 50% 50%;
+      margin-top: 2px;
+    }
+    .buddy-torso {
+      width: 56px;
+      height: 58px;
+      background: #1a1a1a;
+      border-radius: 6px;
+      position: absolute;
+      left: 50%;
+      top: 46px;
+      transform: translateX(-50%);
+      box-shadow: inset -5px -5px 0 rgba(255,255,255,0.06);
+    }
+    .buddy-arm-l, .buddy-arm-r {
+      width: 22px;
+      height: 52px;
+      background: #111;
+      border-radius: 5px;
+      position: absolute;
+      top: 48px;
+      box-shadow: inset -3px -3px 0 rgba(255,255,255,0.05);
+    }
+    .buddy-arm-l { left: 4px; }
+    .buddy-arm-r { right: 4px; }
+    .buddy-leg-l, .buddy-leg-r {
+      width: 24px;
+      height: 42px;
+      background: #0d0d0d;
+      border-radius: 5px;
+      position: absolute;
+      top: 102px;
+      box-shadow: inset -3px -3px 0 rgba(255,255,255,0.05);
+    }
+    .buddy-leg-l { left: 28px; }
+    .buddy-leg-r { right: 28px; }
+
+    /* === Мини-чат === */
+    #mini-chat {
+      display: none;
+      position: fixed;
+      right: 28px;
+      bottom: 190px;
+      width: 280px;
+      max-width: calc(100vw - 40px);
+      background: rgba(18, 22, 28, 0.96);
+      border: 2px solid #8fe08f;
+      border-radius: 14px;
+      padding: 14px;
+      z-index: 30;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(143,224,143,0.2);
+      text-align: left;
+      color: #cfe8cf;
+      font-size: 0.95rem;
+    }
+    #mini-chat.open { display: block; animation: chatIn 0.25s ease; }
+    @keyframes chatIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #mini-chat h3 {
+      margin: 0 0 10px;
+      color: #8fe08f;
+      font-size: 1.05rem;
+    }
+    #chat-log {
+      max-height: 180px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-msg {
+      padding: 8px 10px;
+      border-radius: 10px;
+      line-height: 1.35;
+    }
+    .chat-msg.bot {
+      background: rgba(143,224,143,0.12);
+      border: 1px solid rgba(143,224,143,0.35);
+    }
+    .chat-msg.user {
+      background: rgba(255,255,255,0.08);
+      align-self: flex-end;
+    }
+    #chat-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    #chat-options button {
+      cursor: pointer;
+      border: 1px solid #8fe08f;
+      background: transparent;
+      color: #8fe08f;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+    #chat-options button:hover {
+      background: #8fe08f;
+      color: #1a1f24;
+    }
+    #chat-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #8fe08f;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -79,6 +261,41 @@
     <p>lets chat!</p>
     <p>how are you feeling</p>
   </main>
+
+  <!-- Роблокс-персонаж справа снизу + зелёный пузырь ! -->
+  <div id="buddy">
+    <button id="speech-btn" type="button" title="clickable" aria-label="Открыть чат">
+      <svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 8 h48 a8 8 0 0 1 8 8 v28 a8 8 0 0 1 -8 8 H36 l-8 16 -4 -16 H8 a8 8 0 0 1 -8 -8 V16 a8 8 0 0 1 8 -8 z"
+              fill="#1a6b2a" stroke="#3dff5a" stroke-width="4"/>
+        <text x="32" y="38" text-anchor="middle" fill="#fff" font-size="28" font-weight="bold" font-family="Segoe UI,sans-serif">!</text>
+      </svg>
+    </button>
+    <div class="buddy-body" aria-hidden="true">
+      <div class="buddy-arm-l"></div>
+      <div class="buddy-arm-r"></div>
+      <div class="buddy-torso"></div>
+      <div class="buddy-leg-l"></div>
+      <div class="buddy-leg-r"></div>
+      <div class="buddy-head">
+        <div class="buddy-face">
+          <div class="buddy-eyes">
+            <span class="buddy-eye"></span>
+            <span class="buddy-eye"></span>
+          </div>
+          <div class="buddy-smile"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Мини-чат -->
+  <div id="mini-chat" role="dialog" aria-label="Мини чат">
+    <button id="chat-close" type="button" aria-label="Закрыть">×</button>
+    <h3>lets chat!</h3>
+    <div id="chat-log"></div>
+    <div id="chat-options"></div>
+  </div>
 
   <script>
     // === Грозовые облака с молниями на весь экран ===
@@ -231,6 +448,66 @@
     document.addEventListener('touchstart', unlockAudio);
 
     setInterval(playYay, 10000); // каждые 10 секунд
+
+    // === Мини-чат у персонажа ===
+    const speechBtn = document.getElementById('speech-btn');
+    const miniChat = document.getElementById('mini-chat');
+    const chatClose = document.getElementById('chat-close');
+    const chatLog = document.getElementById('chat-log');
+    const chatOptions = document.getElementById('chat-options');
+
+    const replies = {
+      'how are you': 'I\'m great, thanks for asking! ⚡ Stormy vibes today.',
+      'как ты': 'Я отлично, спасибо! Гроза и зелёный свет — мой вайб.',
+      'how are you feeling': 'Feeling electric ⚡ How about you?',
+      'hello': 'Hey! Welcome to Noelle\'s webpage 💚',
+      'привет': 'Привет! Рад тебя видеть 💚',
+      'bye': 'See you later!',
+      'пока': 'Пока! Заходи ещё.'
+    };
+
+    function addMsg(text, who) {
+      const d = document.createElement('div');
+      d.className = 'chat-msg ' + who;
+      d.textContent = text;
+      chatLog.appendChild(d);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function showOptions(list) {
+      chatOptions.innerHTML = '';
+      list.forEach(label => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = label;
+        b.addEventListener('click', () => {
+          addMsg(label, 'user');
+          const key = label.toLowerCase();
+          const ans = replies[key] || 'Hmm... tell me more!';
+          setTimeout(() => addMsg(ans, 'bot'), 350);
+        });
+        chatOptions.appendChild(b);
+      });
+    }
+
+    function openChat() {
+      miniChat.classList.add('open');
+      if (!chatLog.children.length) {
+        addMsg('hey! how are you feeling?', 'bot');
+        showOptions(['how are you', 'как ты', 'hello', 'привет', 'bye']);
+      }
+    }
+
+    function closeChat() {
+      miniChat.classList.remove('open');
+    }
+
+    speechBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (miniChat.classList.contains('open')) closeChat();
+      else openChat();
+    });
+    chatClose.addEventListener('click', closeChat);
   </script>
 </body>
 </html>
