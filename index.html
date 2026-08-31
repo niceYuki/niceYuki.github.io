@@ -449,21 +449,51 @@
 
     setInterval(playYay, 10000); // каждые 10 секунд
 
-    // === Мини-чат у персонажа ===
+    // === Мини-чат у персонажа (диалог Brandon'а) ===
     const speechBtn = document.getElementById('speech-btn');
     const miniChat = document.getElementById('mini-chat');
     const chatClose = document.getElementById('chat-close');
     const chatLog = document.getElementById('chat-log');
     const chatOptions = document.getElementById('chat-options');
 
-    const replies = {
-      'how are you': 'I\'m great, thanks for asking! ⚡ Stormy vibes today.',
-      'как ты': 'Я отлично, спасибо! Гроза и зелёный свет — мой вайб.',
-      'how are you feeling': 'Feeling electric ⚡ How about you?',
-      'hello': 'Hey! Welcome to Noelle\'s webpage 💚',
-      'привет': 'Привет! Рад тебя видеть 💚',
-      'bye': 'See you later!',
-      'пока': 'Пока! Заходи ещё.'
+    // Карта диалога Brandon6875935: { вопрос/ответ: { bot, next: опции } }
+    const DIALOGUE = {
+      start: {
+        bot: "let's chat! how are you feeling",
+        next: ["feeling bad", "feeling good"]
+      },
+      'feeling bad': {
+        bot: "sorry :( whats going on?",
+        next: ["something online", "something irl"]
+      },
+      'something online': {
+        bot: "noobs/trolls bothering you? try ignoring :D it'll be okay",
+        next: null
+      },
+      'something irl': {
+        bot: "hope it works out, wish i could help sooner.. try talking it out with the person",
+        next: null
+      },
+      'feeling good': {
+        bot: "cool :D what have you been up to",
+        next: ["playing games", "чтонибудь другое"]
+      },
+      'playing games': {
+        bot: "oh what game is your favorite right now?",
+        next: ["heli wars", "что-то другое"]
+      },
+      'heli wars': {
+        bot: "ozo is that you? LOL it must be! Hope you still get out there and pwn, so much fun",
+        next: null
+      },
+      'чтонибудь другое': {
+        bot: "nice! :)",
+        next: null
+      },
+      'что-то другое': {
+        bot: "ok :)",
+        next: null
+      }
     };
 
     function addMsg(text, who) {
@@ -474,27 +504,42 @@
       chatLog.scrollTop = chatLog.scrollHeight;
     }
 
-    function showOptions(list) {
+    function renderOptions(options) {
       chatOptions.innerHTML = '';
-      list.forEach(label => {
+      if (!options) return;
+      options.forEach(label => {
         const b = document.createElement('button');
         b.type = 'button';
         b.textContent = label;
-        b.addEventListener('click', () => {
-          addMsg(label, 'user');
-          const key = label.toLowerCase();
-          const ans = replies[key] || 'Hmm... tell me more!';
-          setTimeout(() => addMsg(ans, 'bot'), 350);
-        });
+        b.addEventListener('click', () => handleAnswer(label));
         chatOptions.appendChild(b);
       });
+    }
+
+    function handleAnswer(label) {
+      addMsg(label, 'user');
+      let botAnswer = '';
+      let nextOptions = null;
+      const direct = DIALOGUE[label];
+      if (direct) {
+        botAnswer = direct.bot;
+        nextOptions = direct.next;
+      } else {
+        botAnswer = "interesting :)";
+        nextOptions = null;
+      }
+      setTimeout(() => {
+        addMsg(botAnswer, 'bot');
+        renderOptions(nextOptions);
+      }, 600);
     }
 
     function openChat() {
       miniChat.classList.add('open');
       if (!chatLog.children.length) {
-        addMsg('hey! how are you feeling?', 'bot');
-        showOptions(['how are you', 'как ты', 'hello', 'привет', 'bye']);
+        const start = DIALOGUE.start;
+        addMsg(start.bot, 'bot');
+        renderOptions(start.next);
       }
     }
 
